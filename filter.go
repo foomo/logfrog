@@ -38,7 +38,7 @@ func GetFilter(file string) (filterFunc Filter, err error) {
 		if errSetService != nil {
 			return errors.New("could not set service in filter vm:" + errSetService.Error())
 		}
-		res, errRun := vm.Run(`JSON.stringify(filter(service, JSON.parse(logData)));`)
+		res, errRun := vm.Run(`JSON.stringify(filter(JSON.parse(logData), service));`)
 		if errRun != nil {
 			return errRun
 		}

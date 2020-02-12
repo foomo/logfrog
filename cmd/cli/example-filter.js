@@ -1,10 +1,11 @@
-// filter function must be named filter
+// filter function must be named filter, it will be reloaded if updated
 //
-// @param service:string only filled with logfrog --docker-compose
 // @param logEntry:{msg?:string;level?:string;time?:string, ...}
+// @param service:string only set with -log-type docker-compose or stern
+//
 // @return logEntry | null when null is returned this entry is filtered out
-function filter(service, logEntry) {
-  // let us look at the service
+function filter(logEntry, service) {
+  // let us look at the service in this naive docker-compose example I butcher the name
   switch (service.substr(0, service.length - 2)) {
     case "elasticsearch":
       // very minimal log entries for elastic search
