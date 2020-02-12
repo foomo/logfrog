@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -10,6 +11,8 @@ import (
 
 	"github.com/foomo/logfrog"
 )
+
+var version string = "dev"
 
 func must(comment string, err error) {
 	if err != nil {
@@ -43,11 +46,55 @@ func watchJSFilter(file string, lastMod time.Time) (filter logfrog.Filter, newLa
 	return
 }
 
+const usage = `
+usage examples:
+
+# docker-compose:
+docker-compose logs -f --tail 1 --no-color | logfrog -log-type docker-compose
+
+# stern:
+stern -o json -n some-name-space | logfrog -log-type stern
+`
+
 func main() {
 
-	flagJS := flag.String("js-filter", "", "/path/to/file with js function filter")
-	flagDockerCompose := flag.Bool("docker-compose", false, "docker-compose mode - do not forget to add a --no-color on the docker-compose logs ;)")
-	flag.Parse()
+	cli := flag.NewFlagSet("logfrog", flag.ExitOnError)
+	flagJS := cli.String("js-filter", "", "/path/to/file with js function filter")
+	flagHelp := cli.Bool("help", false, "show help")
+	flagVersion := cli.Bool("version", false, "show version")
+	flagLogType := cli.String("log-type", string(logfrog.ReaderTypePlain), "docker-compose | stern")
+	errParse := cli.Parse(os.Args[1:])
+
+	if errParse != nil || *flagHelp {
+		fmt.Println(os.Args[0])
+		cli.PrintDefaults()
+		fmt.Println(usage)
+		os.Exit(1)
+	}
+
+	if *flagVersion {
+		fmt.Println(version)
+		os.Exit(0)
+	}
+
+	logType := logfrog.ReaderType(*flagLogType)
+
+	var logReader logfrog.LogReader
+	switch logType {
+	case logfrog.ReaderTypeDockerCompose:
+		logReader = &logfrog.ReaderDockerCompose{}
+	case logfrog.ReaderTypeStern:
+		logReader = &logfrog.ReaderStern{}
+	case logfrog.ReaderTypePlain:
+		logReader = &logfrog.ReaderPlain{}
+	default:
+		must("unknown log type: '"+string(logType)+"'", errors.New("log type must be one of: "+strings.Join(func() (types []string) {
+			for _, t := range logfrog.GetAvailableTypes() {
+				types = append(types, string(t))
+			}
+			return types
+		}(), ", ")))
+	}
 
 	filter, filterModTime, errWatchJSFilter := watchJSFilter(*flagJS, time.Time{})
 	must("could not load filter", errWatchJSFilter)
@@ -63,6 +110,23 @@ func main() {
 			fmt.Println("done reading", errReadString)
 			os.Exit(1)
 		}
+		// trim stuff
+		line = strings.Trim(line, "\n")
+		line = strings.Trim(line, " ")
+		line = strings.Trim(line, "	")
+
+		// skip if not valid
+		if !logReader.Valid(line) {
+			continue
+		}
+
+		// run the configured reader
+		label, logData, errRead := logReader.Read(line)
+		if errRead != nil {
+			logData = logfrog.LogData{"msg": line}
+		}
+
+		// js filter update?
 		if *flagJS != "" {
 			nextFilter, nextFilterModTime, errNextFilter := watchJSFilter(*flagJS, filterModTime)
 			if errNextFilter != nil {
@@ -73,27 +137,14 @@ func main() {
 				printer.Info("reloaded filter", filterModTime)
 			}
 		}
-		line = strings.Trim(line, "\n")
-		label := ""
-		var logData logfrog.LogData
-		var errRead error
-		if *flagDockerCompose {
-			parts := strings.Split(line, "|")
-			if len(parts) == 1 {
-				continue
-			}
-			label, logData, errRead = logfrog.ReadDockerComposeLine(line)
-		} else {
-			logData, errRead = logfrog.Read(line)
-			if errRead != nil {
-				logData = logfrog.LogData{"msg": line}
-			}
-		}
 
+		// execute filter
 		errFilter := filter(label, &logData)
 		if errFilter != nil {
 			fmt.Println("filter error", errFilter)
 		}
+
+		// print filtered result
 		if logData != nil && len(logData) > 0 {
 			printer.Print(label, logData)
 		}

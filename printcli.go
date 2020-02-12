@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/fatih/color"
 	"github.com/nsf/termbox-go"
@@ -193,22 +194,21 @@ func (p *Printer) block(label string, lastLabel string, logData LogData) {
 			colorNormal.Print(colSep)
 			colorLevel.Println(linePart)
 		}, logMsg, rightWidth)
-		return
 	}
 
 	// log time if set
-	if logTime != "" {
-		colorForService.Print(leftBlock)
-		colorNormal.Print(colSep)
-		colorNormal.Println(logTime)
+	if logTime == "" {
+		logTime = fmt.Sprint(time.Now())
 	}
+	colorForService.Print(leftBlock)
+	colorNormal.Print(colSep)
+	colorNormal.Println(logTime)
 
 	// anything else to log
 	if len(logData) > 0 {
 		dump(func(line int) {
 			colorForService.Print(leftBlock)
 		}, logData, 0, "", 0)
-
 	}
 
 	// and a stock at the very end

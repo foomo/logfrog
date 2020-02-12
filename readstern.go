@@ -2,6 +2,7 @@ package logfrog
 
 import (
 	"encoding/json"
+	"strings"
 )
 
 type sternEntry struct {
@@ -11,8 +12,7 @@ type sternEntry struct {
 	ContainerName string `json:"containerName"`
 }
 
-type ReaderStern struct {
-}
+type ReaderStern struct{}
 
 func (pr *ReaderStern) Valid(line string) bool {
 	return line != "" && line[0] == '{' && line[len(line)-1] == '}'
@@ -28,14 +28,14 @@ func (pr *ReaderStern) Read(line string) (label string, logData LogData, err err
 	}
 	label = sd.Namespace + ":" + sd.PodName + "(" + sd.ContainerName + ")"
 	errLogData := json.Unmarshal([]byte(sd.Message), &logData)
+	if errLogData != nil {
+		logData["msg"] = strings.Trim(sd.Message, "\n")
+	}
 	sd.Message = ""
-	logData["sternData"] = map[string]string{
+	logData["stern"] = map[string]string{
 		"namespace":     sd.Namespace,
 		"containerName": sd.ContainerName,
 		"podName":       sd.PodName,
-	}
-	if errLogData != nil {
-		return
 	}
 	return
 }
