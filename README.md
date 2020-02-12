@@ -7,6 +7,10 @@
 
 Status: logfrog is very young atm and especially the way we filter is most likely going to change. Despite that it already provides a lot of value, when you are trying to make sense of logs.
 
+## installation
+
+`brew install foomo/logfrog/logfrog`
+
 ## use cases
 
 ### stern
@@ -92,7 +96,7 @@ This is an initial set of fields, please let us know what we should add.
 
 ## todos
 
-- add hombrew support
-- map more fields
-- stern mode like docker-compose
-- maybe add a web frontend ?!
+- ☑️ map more fields
+- ☑️ maybe add a web frontend ?!
+- ✅stern mode like docker-compose
+- ✅add hombrew support
