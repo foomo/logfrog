@@ -9,16 +9,16 @@ import (
 const simpleLine = `{"level":"info"}`
 
 func TestRead(t *testing.T) {
-	_, errReadCrap := Read("[crap")
+	_, _, errReadCrap := read("[crap")
 	assert.Error(t, errReadCrap)
-	logData, errRead := Read(simpleLine)
+	_, logData, errRead := read(simpleLine)
 	assert.NoError(t, errRead)
 	assert.Equal(t, "info", logData["level"])
 }
 
 func TestReadDockerComposeLine(t *testing.T) {
 	expectedLabel := "some sörvice"
-	label, logData, errRead := ReadDockerComposeLine(" " + expectedLabel + " 	| 	" + simpleLine)
+	label, logData, errRead := readDockerComposeLine(" " + expectedLabel + " 	| 	" + simpleLine)
 	assert.Equal(t, expectedLabel, label)
 	assert.NoError(t, errRead)
 	assert.Equal(t, "info", logData["level"])
