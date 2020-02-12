@@ -1,0 +1,28 @@
+builds:
+  - binary: logfrog
+    main: ./cmd/cli/logfrog.go
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X cmd/cli/main.version={{.Version}}
+      - -s -w -X main.version={{.Version}}
+    goos:
+#      - windows ./printcli.go:55:9: undefined: syscall.SIGWINCH 🤮
+      - darwin
+      - linux
+    goarch:
+      - amd64
+
+archives:
+  - format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+
+brews:
+  - github:
+      owner: foomo
+      name: homebrew-logfrog
+    caveats: "logfrog --help"
+    homepage: "https://github.com/foomo/logfrog"
+    description: "cli utility to tail structured json logs from streams specially featuring stern and docker-compose with support for filtering and transformations of log entries"
