@@ -9,7 +9,6 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/nsf/termbox-go"
-	"gopkg.in/yaml.v2"
 )
 
 type Printer struct {
@@ -18,8 +17,6 @@ type Printer struct {
 	lastLabel         string
 	w                 int
 }
-
-type LogData map[string]interface{}
 
 const maxLabelWidth = 40
 
@@ -109,7 +106,7 @@ func (p *Printer) Info(arg ...interface{}) {
 func (p *Printer) block(label string, lastLabel string, logData LogData) {
 	// some colors
 	colorNormal := color.New(color.BgBlack).Add(color.FgWhite)
-	colorDump := color.New(color.BgBlack).Add(color.FgHiWhite).Add(color.Bold)
+	//colorDump := color.New(color.BgBlack).Add(color.FgHiWhite).Add(color.Bold)
 	colorForServiceLine := color.New(p.colorForService(label)).Add(color.FgWhite)
 	colorForService := colorForServiceLine.Add(color.Bold)
 
@@ -127,7 +124,7 @@ func (p *Printer) block(label string, lastLabel string, logData LogData) {
 		}
 	}
 
-	dataBlock := ""
+	//dataBlock := ""
 	trimmedLabel := " "
 	trimmedLabelLength := 1
 	const padding = 2
@@ -174,36 +171,25 @@ func (p *Printer) block(label string, lastLabel string, logData LogData) {
 		colorLevel.Add(color.FgHiWhite)
 	}
 
+	left := func(line int) {
+		if line == 0 {
+			if lastLabel != label {
+				colorForService.Print(trimmedLabel)
+			} else {
+				colorForService.Print(leftSep)
+			}
+		} else {
+			colorForService.Print(leftBlock)
+		}
+	}
 	if logLevel != "" {
 		// we got a log level
-		block(func(line int) {
-			if line == 0 {
-				if lastLabel != label {
-					colorForService.Print(trimmedLabel)
-				} else {
-					colorForService.Print(leftSep)
-				}
-			} else {
-				colorForService.Print(leftBlock)
-			}
-			colorNormal.Print(colSep)
-		}, func(line int, linePart string) {
+		block(left, func(line int, linePart string) {
 			colorLevel.Println(linePart)
-		}, logLevel+": "+logMsg, rightWidth)
+		}, " "+logLevel+": "+logMsg, rightWidth)
 	} else {
 		// not a properly readable one line log msg
-		block(func(line int) {
-			if line == 0 {
-				if lastLabel != label {
-					colorForService.Print(trimmedLabel)
-				} else {
-
-					colorForService.Print(leftSep)
-				}
-			} else {
-				colorForService.Print(leftBlock)
-			}
-		}, func(line int, linePart string) {
+		block(left, func(line int, linePart string) {
 			colorNormal.Print(colSep)
 			colorLevel.Println(linePart)
 		}, logMsg, rightWidth)
@@ -219,27 +205,9 @@ func (p *Printer) block(label string, lastLabel string, logData LogData) {
 
 	// anything else to log
 	if len(logData) > 0 {
-		yamlBytes, errMarshal := yaml.Marshal(logData)
-		if errMarshal == nil {
-			dataBlockLines := strings.Split(strings.Trim(string(yamlBytes), "\n"), "\n")
-			dataBlock = ""
-			prefix := ""
-			for _, l := range dataBlockLines {
-				dataBlock += prefix + "  " + l
-				prefix = "\n"
-			}
-		} else {
-			dataBlock = errMarshal.Error() + fmt.Sprint(logData)
-		}
-
-		multiBlock(func(line int) {
-			if label != "" {
-				colorForService.Print(leftBlock)
-				colorNormal.Print(colSep)
-			}
-		}, func(line int, linePart string) {
-			colorDump.Println(linePart)
-		}, dataBlock, rightWidth)
+		dump(func(line int) {
+			colorForService.Print(leftBlock)
+		}, logData, 0, "", 0)
 
 	}
 
