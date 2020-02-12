@@ -46,11 +46,8 @@ tail -f path-to-file.json | logfrog --js-filter path/to/filter.js
 ```
 
 - the js file is executed with the otto vm [https://github.com/robertkrimen/otto](https://github.com/robertkrimen/otto)
-
 - it has to contain a filter function like the one below
-
 - the file will be reevaluated, when it changes
-
 - *this is highly EXPERIMENTAL* and we would love to hear back from you
 
   
@@ -98,5 +95,5 @@ This is an initial set of fields, please let us know what we should add.
 
 - ☑️ map more fields
 - ☑️ maybe add a web frontend ?!
-- ✅stern mode like docker-compose
-- ✅add hombrew support
+- ✅ stern mode like docker-compose
+- ✅ add hombrew support
