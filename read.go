@@ -10,10 +10,11 @@ const (
 	ReaderTypePlain         ReaderType = ""
 	ReaderTypeDockerCompose ReaderType = "docker-compose"
 	ReaderTypeStern         ReaderType = "stern"
+	ReaderTypeGograpple     ReaderType = "gograpple"
 )
 
 func GetAvailableTypes() []ReaderType {
-	return []ReaderType{ReaderTypeDockerCompose, ReaderTypeStern}
+	return []ReaderType{ReaderTypeDockerCompose, ReaderTypeStern, ReaderTypeGograpple}
 }
 
 type LogData map[string]interface{}
@@ -34,8 +35,8 @@ func (pr *ReaderPlain) Read(line string) (label string, logData LogData, err err
 }
 
 // Read read a json log line
-func read(line string) (_ string, logData LogData, errRead error) {
-	_ = ""
+func read(line string) (label string, logData LogData, errRead error) {
+	label = ""
 	errParse := json.Unmarshal([]byte(line), &logData)
 	if errParse != nil {
 		errRead = errParse

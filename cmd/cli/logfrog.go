@@ -54,6 +54,9 @@ docker-compose logs -f --tail 1 --no-color | logfrog -log-type docker-compose
 
 # stern:
 stern -o json -n some-name-space | logfrog -log-type stern
+
+# gograpple:
+gograpple delve my-deployment -c my-container -v --input main.go -n my-ns --vscode | logfrog -log-type gograpple
 `
 
 func main() {
@@ -62,7 +65,9 @@ func main() {
 	flagJS := cli.String("js-filter", "", "/path/to/file with js function filter")
 	flagHelp := cli.Bool("help", false, "show help")
 	flagVersion := cli.Bool("version", false, "show version")
-	flagLogType := cli.String("log-type", string(logfrog.ReaderTypePlain), "docker-compose | stern")
+	flagTimestamps := cli.Bool("timestamps", false, "add timestamps, if not present")
+	flagLogType := cli.String("log-type", string(logfrog.ReaderTypePlain), "docker-compose | stern | gograpple")
+
 	errParse := cli.Parse(os.Args[1:])
 
 	if errParse != nil || *flagHelp {
@@ -87,6 +92,8 @@ func main() {
 		logReader = &logfrog.ReaderStern{}
 	case logfrog.ReaderTypePlain:
 		logReader = &logfrog.ReaderPlain{}
+	case logfrog.ReaderTypeGograpple:
+		logReader = &logfrog.ReaderGograpple{}
 	default:
 		must("unknown log type: '"+string(logType)+"'", errors.New("log type must be one of: "+strings.Join(func() (types []string) {
 			for _, t := range logfrog.GetAvailableTypes() {
@@ -100,7 +107,7 @@ func main() {
 	must("could not load filter", errWatchJSFilter)
 
 	reader := bufio.NewReader(os.Stdin)
-	printer, errPrinter := logfrog.NewCLIPrinter()
+	printer, errPrinter := logfrog.NewCLIPrinter(*flagTimestamps)
 
 	must("could not initialize printer", errPrinter)
 

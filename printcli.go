@@ -16,6 +16,7 @@ type Printer struct {
 	labelWidth        int
 	colorsForServices map[string]color.Attribute
 	lastLabel         string
+	timestamps        bool
 	w                 int
 }
 
@@ -45,8 +46,8 @@ func getWidth() int {
 }
 
 // NewCLIPrinter
-func NewCLIPrinter() (*Printer, error) {
-	p := &Printer{labelWidth: 20, colorsForServices: map[string]color.Attribute{}, w: getWidth()}
+func NewCLIPrinter(timestamps bool) (*Printer, error) {
+	p := &Printer{timestamps: timestamps, labelWidth: 20, colorsForServices: map[string]color.Attribute{}, w: getWidth()}
 	go func() {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c)
@@ -197,12 +198,14 @@ func (p *Printer) block(label string, lastLabel string, logData LogData) {
 	}
 
 	// log time if set
-	if logTime == "" {
+	if logTime == "" && p.timestamps {
 		logTime = fmt.Sprint(time.Now())
 	}
-	colorForService.Print(leftBlock)
-	colorNormal.Print(colSep)
-	colorNormal.Println(logTime)
+	if logTime != "" {
+		colorForService.Print(leftBlock)
+		colorNormal.Print(colSep)
+		colorNormal.Println(logTime)
+	}
 
 	// anything else to log
 	if len(logData) > 0 {
