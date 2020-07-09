@@ -6,7 +6,6 @@ builds:
     ldflags:
       - -s -w -X main.version={{.Version}}
     goos:
-      - windows
       - darwin
       - linux
     goarch:
@@ -14,9 +13,6 @@ builds:
 
 archives:
   - format: tar.gz
-    format_overrides:
-      - goos: windows
-        format: zip
 
 brews:
   - github:
