@@ -4,10 +4,9 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X cmd/cli/main.version={{.Version}}
       - -s -w -X main.version={{.Version}}
     goos:
-#      - windows ./printcli.go:55:9: undefined: syscall.SIGWINCH 🤮
+      - windows
       - darwin
       - linux
     goarch:
