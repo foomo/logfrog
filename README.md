@@ -15,11 +15,11 @@ Status: logfrog is very young atm and especially the way we filter is most likel
 
 ### stern
 
-### docker-compose logs
-
 ```bash
 stern -o json -n some-name-space | logfrog -log-type stern
 ```
+
+### docker-compose logs
 
 ```bash
 docker-compose logs --no-color -f | logfrog -log-type docker-compose
