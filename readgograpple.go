@@ -24,25 +24,23 @@ func readGograppleLine(line string) (label string, logData LogData, err error) {
 		err = errParse
 		return
 	}
-	msg, okMSGOk := logData["msg"]
-	if okMSGOk {
-		switch msg.(type) {
-		case string:
-			label = "dlv"
-			msgString := msg.(string)
-			if len(msgString) > 2 {
-				msgBytes := []byte(msgString)
-				if msgBytes[0] == '{' && msgBytes[len(msgBytes)-1] == '}' {
-					label = "process"
-					logData = LogData{}
-					errParse := json.Unmarshal(msgBytes, &logData)
-					if errParse != nil {
-						err = errParse
-						return
-					}
+
+	switch tm := logData["msg"].(type) {
+	case string:
+		label = "dlv"
+		if len(tm) > 2 {
+			msgBytes := []byte(tm)
+			if msgBytes[0] == '{' && msgBytes[len(msgBytes)-1] == '}' {
+				label = "process"
+				logData = LogData{}
+				errParse := json.Unmarshal(msgBytes, &logData)
+				if errParse != nil {
+					err = errParse
+					return
 				}
 			}
 		}
 	}
+
 	return
 }
