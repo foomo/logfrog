@@ -25,11 +25,11 @@ func dump(left func(line int), v interface{}, indent int, label string, line int
 	}
 	switch t := v.(type) {
 	case string:
-		dumpColorString.Println("\"" + strings.ReplaceAll(v.(string), "\n", "\\n") + "\"")
+		dumpColorString.Println("\"" + strings.ReplaceAll(t, "\n", "\\n") + "\"")
 	case float64, float32, int, int64, int32, int16, int8, uint, uint16, uint32, uint64:
-		dumpColorNumber.Println(v)
+		dumpColorNumber.Println(t)
 	case bool:
-		if v.(bool) {
+		if t {
 			dumpColorBoolean.Println("true")
 		} else {
 			dumpColorBoolean.Println("false")
@@ -37,29 +37,28 @@ func dump(left func(line int), v interface{}, indent int, label string, line int
 	case nil:
 		fmt.Println("null")
 	case LogData:
-		for k, value := range v.(LogData) {
+		for k, value := range t {
 			dump(left, value, indent+1, k+": ", line+1)
 		}
 	case map[string]interface{}:
-		if len(v.(map[string]interface{})) > 0 {
+		if len(t) > 0 {
 			fmt.Println()
 		}
-		for k, value := range v.(map[string]interface{}) {
+		for k, value := range t {
 			dump(left, value, indent+1, k+": ", line+1)
 		}
 	case map[string]string:
-		if len(v.(map[string]string)) > 0 {
+		if len(t) > 0 {
 			fmt.Println()
 		}
-		for k, value := range v.(map[string]string) {
+		for k, value := range t {
 			dump(left, value, indent+1, k+": ", line+1)
 		}
 	case []interface{}:
-		sliceValue := v.([]interface{})
-		if len(sliceValue) > 0 {
+		if len(t) > 0 {
 			fmt.Println()
 		}
-		for _, value := range sliceValue {
+		for _, value := range t {
 			dump(left, value, indent+1, "- ", line+1)
 		}
 	default:

@@ -12,7 +12,7 @@ import (
 	"github.com/foomo/logfrog"
 )
 
-var version string = "dev"
+var version = "dev"
 
 func must(comment string, err error) {
 	if err != nil {
@@ -60,7 +60,6 @@ gograpple delve my-deployment -c my-container -v --input main.go -n my-ns --vsco
 `
 
 func main() {
-
 	cli := flag.NewFlagSet("logfrog", flag.ExitOnError)
 	flagJS := cli.String("js-filter", "", "/path/to/file with js function filter")
 	flagHelp := cli.Bool("help", false, "show help")
