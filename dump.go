@@ -2,6 +2,7 @@ package logfrog
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/fatih/color"
@@ -37,22 +38,49 @@ func dump(left func(line int), v interface{}, indent int, label string, line int
 	case nil:
 		fmt.Println("null")
 	case LogData:
-		for k, value := range v.(LogData) {
-			dump(left, value, indent+1, k+": ", line+1)
+		value := v.(LogData)
+		keys := make([]string, len(value))
+		i := 0
+		for k := range value {
+			keys[i] = k
+			i++
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			keyValue := value[k]
+			dump(left, keyValue, indent+1, k+": ", line+1)
 		}
 	case map[string]interface{}:
-		if len(v.(map[string]interface{})) > 0 {
+		value := v.(map[string]interface{})
+		if len(value) > 0 {
 			fmt.Println()
 		}
-		for k, value := range v.(map[string]interface{}) {
-			dump(left, value, indent+1, k+": ", line+1)
+		keys := make([]string, len(value))
+		i := 0
+		for k := range value {
+			keys[i] = k
+			i++
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			keyValue := value[k]
+			dump(left, keyValue, indent+1, k+": ", line+1)
 		}
 	case map[string]string:
-		if len(v.(map[string]string)) > 0 {
+		value := v.(map[string]string)
+		if len(value) > 0 {
 			fmt.Println()
 		}
-		for k, value := range v.(map[string]string) {
-			dump(left, value, indent+1, k+": ", line+1)
+		keys := make([]string, len(value))
+		i := 0
+		for k := range value {
+			keys[i] = k
+			i++
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			keyValue := value[k]
+			dump(left, keyValue, indent+1, k+": ", line+1)
 		}
 	case []interface{}:
 		sliceValue := v.([]interface{})

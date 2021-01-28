@@ -156,7 +156,7 @@ func (p *Printer) block(label string, lastLabel string, logData LogData) {
 
 	// extract some data
 	logLevel := strings.ToLower(extract(logData, "level", "Level", "logLevel"))
-	logTime := extract(logData, "time", "timestamp", "Timestamp")
+	logTime := extract(logData, "time", "timestamp", "Timestamp", "ts")
 	logMsg := strings.Trim(extract(logData, "msg", "Message", "message"), "\n")
 	logStack := extract(logData, "stack")
 

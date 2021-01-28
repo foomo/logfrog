@@ -15,7 +15,7 @@ archives:
   - format: tar.gz
 
 brews:
-  - github:
+  - tap:
       owner: foomo
       name: homebrew-logfrog
     caveats: "logfrog --help"
