@@ -3,14 +3,18 @@ builds:
     main: ./cmd/cli/logfrog.go
     env:
       - CGO_ENABLED=0
-    ldflags:
-      - -s -w -X main.version={{.Version}}
     goos:
       - darwin
       - linux
     goarch:
       - amd64
       - arm64
+    goarm:
+      - "7"
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{.Version}}
 
 archives:
   - format: tar.gz
