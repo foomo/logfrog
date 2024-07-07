@@ -1,10 +1,11 @@
+version: 2
+
 builds:
   - binary: logfrog
     main: ./cmd/cli/logfrog.go
     env:
       - CGO_ENABLED=0
     goos:
-      - windows
       - darwin
       - linux
     goarch:
@@ -22,9 +23,6 @@ release:
 
 archives:
   - format: tar.gz
-    format_overrides:
-      - goos: windows
-        format: zip
 
 changelog:
   use: github-native
