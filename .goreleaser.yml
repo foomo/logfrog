@@ -4,25 +4,35 @@ builds:
     env:
       - CGO_ENABLED=0
     goos:
+      - windows
       - darwin
       - linux
     goarch:
       - amd64
       - arm64
     goarm:
-      - "7"
+      - '7'
     flags:
       - -trimpath
     ldflags:
       - -s -w -X main.version={{.Version}}
 
+release:
+  prerelease: auto
+
 archives:
   - format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+
+changelog:
+  use: github-native
 
 brews:
-  - tap:
+  - repository:
       owner: foomo
-      name: homebrew-logfrog
+      name: homebrew-tap
     caveats: "logfrog --help"
     homepage: "https://github.com/foomo/logfrog"
-    description: "cli utility to tail structured json logs from streams specially featuring stern and docker-compose with support for filtering and transformations of log entries"
+    description: "CLI utility to tail structured json logs from streams specially featuring stern and docker-compose with support for filtering and transformations of log entries"
