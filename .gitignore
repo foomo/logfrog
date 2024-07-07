@@ -1,3 +1,25 @@
 .*
-!.git*
-/dist
+*.zip
+*.tar
+*.out
+*.log
+/bin/
+/tmp/
+
+## Git
+!.gitkeep
+!.gitignore
+
+## GitHub
+!.github/
+
+## Editorconfig
+!.editorconfig
+
+## Husky
+!.husky/
+!.husky.yaml
+
+## Golang
+!.golangci.yml
+!.goreleaser.yml
