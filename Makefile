@@ -1,22 +1,53 @@
 .DEFAULT_GOAL:=help
+-include .makerc
+
+# --- Targets -----------------------------------------------------------------
 
 ## === Tasks ===
 
-## Install binary
-install:
-	go build -o ${GOPATH}/bin/stern main.go
-
-## Build binary
-build:
-	goreleaser build --rm-dist --snapshot
+.PHONY: doc
+## Open go docs
+doc:
+	@open "http://localhost:6060/pkg/github.com/foomo/logfrog/"
+	@godoc -http=localhost:6060 -play
 
 .PHONY: test
 ## Run tests
 test:
-	go test ./...
+	@GO_TEST_TAGS=-skip go test -coverprofile=coverage.out -race -json ./... | gotestfmt
 
-release:
-	goreleaser --rm-dist
+.PHONY: lint
+## Run linter
+lint:
+	@golangci-lint run
+
+.PHONY: lint.fix
+## Fix lint violations
+lint.fix:
+	@golangci-lint run --fix
+
+.PHONY: tidy
+## Run go mod tidy
+tidy:
+	@go mod tidy
+
+.PHONY: outdated
+## Show outdated direct dependencies
+outdated:
+	@go list -u -m -json all | go-mod-outdated -update -direct
+
+## Build binary
+build:
+	@mkdir -p bin
+	@go build -o bin/logfrog cmd/cli/logfrog.go
+
+## Install binary
+install:
+	@go build -o ${GOPATH}/bin/logfrog cmd/cli/logfrog.go
+
+## Install debug binary
+install.debug:
+	@go build -gcflags "all=-N -l" -o ${GOPATH}/bin/logfrog cmd/cli/logfrog.go
 
 ## === Utils ===
 
