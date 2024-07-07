@@ -1,17 +1,21 @@
 # `logfrog`
 
-
-**`logfrog` likes json logs and it helps you to like them too**
+> `logfrog` likes json logs, and it helps you to like them too
 
 `logfrog` is a cli program that processes json logs line by line from stdin. Those logs typically come from loggers like [logrus](https://github.com/Sirupsen/logrus), [zap](https://github.com/uber-go/zap), [apex](https://github.com/apex/log) or [others](https://github.com/topics/structured-logging), that let you write logs as json objects.
 
-Status: logfrog is very young atm and especially the way we filter is most likely going to change. Despite that it already provides a lot of value, when you are trying to make sense of logs.
+**Status**: logfrog is very young atm and especially the way we filter is most likely going to change. Despite that it already provides a lot of value, when you are trying to make sense of logs.
 
-## installation
+## Installation
 
-`brew install foomo/logfrog/logfrog`
+Install the latest release of the cli:
 
-## use cases
+````bash
+$ brew update
+$ brew install foomo/tap/logfrog
+````
+
+## Use cases
 
 ### stern
 
@@ -50,9 +54,7 @@ tail -f path-to-file.json | logfrog --js-filter path/to/filter.js
 - the file will be reevaluated, when it changes
 - *this is highly EXPERIMENTAL* and we would love to hear back from you
 
-  
-
-```JavaScript
+```javascript
 
 // filter function must be named filter, it will be reloaded if updated
 //
@@ -82,7 +84,7 @@ function filter(logEntry, service) {
 
 ```
 
-## standard fields
+## Standard fields
 
 This is an initial set of fields, please let us know what we should add.
 
@@ -91,9 +93,18 @@ This is an initial set of fields, please let us know what we should add.
 - `time` <- time, timestamp, Timestamp
   
 
-## todos
+## Todos
 
-- ☑️ map more fields
-- ☑️ maybe add a web frontend ?!
-- ✅ stern mode like docker-compose
-- ✅ add hombrew support
+- [ ]  map more fields
+- [ ] maybe add a web frontend ?!
+- [x] stern mode like docker-compose
+- [x] add hombrew support
+
+## How to Contribute
+
+Make a pull request...
+
+## License
+
+Distributed under MIT License, please see license file within the code for more details.
+
