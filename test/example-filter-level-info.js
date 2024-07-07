@@ -1,4 +1,4 @@
-function filter(service, logEntry) {
+function filter(logEntry, service) {
     if(logEntry.level === "info") {
         return null;
     }
