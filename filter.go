@@ -3,7 +3,7 @@ package logfrog
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"os"
 
 	"github.com/robertkrimen/otto"
 )
@@ -13,7 +13,7 @@ type Filter func(service string, ld *LogData) error
 
 // GetFilter get a filter function with a js file, it has to contain a function filter(service, logData) { }
 func GetFilter(file string) (filterFunc Filter, err error) {
-	fileBytes, errRead := ioutil.ReadFile(file)
+	fileBytes, errRead := os.ReadFile(file)
 	if errRead != nil {
 		err = errRead
 		return
@@ -51,7 +51,7 @@ func GetFilter(file string) (filterFunc Filter, err error) {
 			*ld = filteredLD
 			return nil
 		}
-		return errors.New("wtf no string for me ?!")
+		return errors.New("missing string in filter vm:" + res.String())
 	}
 	return
 }

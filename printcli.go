@@ -20,8 +20,6 @@ type Printer struct {
 	w                 int
 }
 
-const maxLabelWidth = 40
-
 var allColors = []color.Attribute{
 	color.BgBlue,
 	color.BgCyan,
@@ -108,7 +106,7 @@ func (p *Printer) Info(arg ...interface{}) {
 func (p *Printer) block(label string, lastLabel string, logData LogData) {
 	// some colors
 	colorNormal := color.New(color.BgBlack).Add(color.FgWhite)
-	//colorDump := color.New(color.BgBlack).Add(color.FgHiWhite).Add(color.Bold)
+	// colorDump := color.New(color.BgBlack).Add(color.FgHiWhite).Add(color.Bold)
 	colorForServiceLine := color.New(p.colorForService(label)).Add(color.FgWhite)
 	colorForService := colorForServiceLine.Add(color.Bold)
 
@@ -126,7 +124,7 @@ func (p *Printer) block(label string, lastLabel string, logData LogData) {
 		}
 	}
 
-	//dataBlock := ""
+	// dataBlock := ""
 	trimmedLabel := " "
 	trimmedLabelLength := 1
 	const padding = 2
@@ -224,7 +222,6 @@ func (p *Printer) block(label string, lastLabel string, logData LogData) {
 		}, func(line int, linePart string) {
 			colorNormal.Println(linePart)
 		}, logStack, rightWidth)
-
 	}
 }
 func multiBlock(left func(int), right func(int, string), lines string, width int) {

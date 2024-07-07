@@ -24,7 +24,7 @@ func (pr *ReaderStern) Read(line string) (label string, logData LogData, err err
 	errUnmarshal := json.Unmarshal([]byte(line), &sd)
 	if errUnmarshal != nil {
 		logData["msg"] = line
-		return "unknown", logData, nil
+		return "unknown", logData, nil //nolint:nilerr
 	}
 	label = sd.Namespace + ":" + sd.PodName + "(" + sd.ContainerName + ")"
 	errLogData := json.Unmarshal([]byte(sd.Message), &logData)

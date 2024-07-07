@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const dumpData = `{
@@ -27,6 +27,6 @@ const dumpData = `{
 
 func TestDump(t *testing.T) {
 	data := map[string]interface{}{}
-	assert.NoError(t, json.Unmarshal([]byte(dumpData), &data))
+	require.NoError(t, json.Unmarshal([]byte(dumpData), &data))
 	dump(func(line int) {}, data, 0, "sepp", 0)
 }

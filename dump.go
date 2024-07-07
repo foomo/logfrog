@@ -13,7 +13,6 @@ var (
 	dumpColorString  = color.New(color.BgBlack).Add(color.FgBlue).Add(color.Bold)
 	dumpColorNumber  = color.New(color.BgBlack).Add(color.FgGreen).Add(color.Bold)
 	dumpColorBoolean = color.New(color.BgBlack).Add(color.FgYellow).Add(color.Bold)
-	dumpColorNull    = color.New(color.BgBlack).Add(color.FgWhite).Add(color.Bold)
 )
 
 func dump(left func(line int), v interface{}, indent int, label string, line int) {

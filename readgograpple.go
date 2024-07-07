@@ -26,10 +26,10 @@ func readGograppleLine(line string) (label string, logData LogData, err error) {
 	}
 	msg, okMSGOk := logData["msg"]
 	if okMSGOk {
-		switch msg.(type) {
+		switch t := msg.(type) {
 		case string:
 			label = "dlv"
-			msgString := msg.(string)
+			msgString := t
 			if len(msgString) > 2 {
 				msgBytes := []byte(msgString)
 				if msgBytes[0] == '{' && msgBytes[len(msgBytes)-1] == '}' {

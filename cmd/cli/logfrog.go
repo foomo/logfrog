@@ -12,7 +12,7 @@ import (
 	"github.com/foomo/logfrog"
 )
 
-var version string = "dev"
+var version = "dev"
 
 func must(comment string, err error) {
 	if err != nil {
@@ -73,7 +73,7 @@ func main() {
 	if errParse != nil || *flagHelp {
 		fmt.Println(os.Args[0])
 		cli.PrintDefaults()
-		fmt.Println(usage)
+		fmt.Print(usage)
 		os.Exit(1)
 	}
 
@@ -152,7 +152,7 @@ func main() {
 		}
 
 		// print filtered result
-		if logData != nil && len(logData) > 0 {
+		if len(logData) > 0 {
 			printer.Print(label, logData)
 		}
 	}

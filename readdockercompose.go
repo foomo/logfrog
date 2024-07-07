@@ -1,7 +1,6 @@
 package logfrog
 
 import (
-	"errors"
 	"strings"
 )
 
@@ -13,10 +12,7 @@ func (pr *ReaderDockerCompose) Valid(line string) bool {
 		return false
 	}
 	parts := strings.Split(line, "|")
-	if len(parts) == 1 {
-		return false
-	}
-	return true
+	return len(parts) != 1
 }
 
 func (pr *ReaderDockerCompose) Read(line string) (label string, logData LogData, err error) {
@@ -44,12 +40,13 @@ func readDockerComposeLine(line string) (
 		}
 	}
 	if !found {
-		errRead = errors.New("| not found")
+		logData = map[string]interface{}{"msg": "| not found"}
+		return
 	}
-	if strings.HasPrefix(trimmedLine, " ") {
-		// bit hacky ...
-		trimmedLine = strings.TrimPrefix(trimmedLine, " ")
-	}
+
+	// bit hacky ...
+	trimmedLine = strings.TrimPrefix(trimmedLine, " ")
+
 	label = strings.Trim(label, "	 ")
 	_, logData, errRead = read(strings.Trim(trimmedLine, " 	\n"))
 	if errRead != nil {

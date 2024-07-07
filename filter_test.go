@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func GetCurrentDir() string {
@@ -14,12 +15,12 @@ func GetCurrentDir() string {
 }
 func TestFilter(t *testing.T) {
 	filterFunc, errGetFilter := GetFilter(path.Join(GetCurrentDir(), "test", "example-filter-level-info.js"))
-	assert.NoError(t, errGetFilter)
+	require.NoError(t, errGetFilter)
 	ld := LogData{"level": "error"}
-	assert.NoError(t, filterFunc("foo", &ld))
+	require.NoError(t, filterFunc("foo", &ld))
 	assert.Len(t, ld, 1)
 	ldInfo := LogData{"level": "info"}
-	assert.NoError(t, filterFunc("foo", &ldInfo))
+	require.NoError(t, filterFunc("foo", &ldInfo))
 	assert.Nil(t, ldInfo)
 }
 
